@@ -1,0 +1,18 @@
+test:
+  image: thecodingmachine/php:7.1-v1-cli
+  cache:
+    paths:
+      - vendor
+      - $HOME/.composer
+
+  before_script:
+    - ci/install.sh
+
+  script:
+    - ci/run_tests.sh
+  artifacts:
+    when: always
+    expire_in: 1 month
+    paths:
+    - coverage
+    - clover.xml

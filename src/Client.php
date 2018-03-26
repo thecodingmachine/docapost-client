@@ -44,7 +44,7 @@ class Client
         return new self($userName, $password, 'https://www.contralia.fr:443/Contralia/api/v2/');
     }
 
-    public function sync()
+    public function sign(): void
     {
         $client = HttpClientDiscovery::find();
 
@@ -52,16 +52,16 @@ class Client
 
         $uriFactory = UriFactoryDiscovery::find();
 
-        $request = $request->withUri($uriFactory->createUri($this->restTransactionUrl.'/'));
+        $request = $request->withUri($uriFactory->createUri($this->restTransactionUrl));
 
         $response = $client->sendRequest($request);
-
     }
 
     private function getBaseRequest() : RequestInterface
     {
         $messageFactory = MessageFactoryDiscovery::find();
-        $request = $messageFactory->createRequest('GET');
+        $uriFactory = UriFactoryDiscovery::find();
+        $request = $messageFactory->createRequest('GET', $uriFactory->createUri($this->restTransactionUrl));
 
         $request = $request->withHeader('Authorization', 'Basic '.base64_encode($this->userName.':'.$this->password));
         return $request;

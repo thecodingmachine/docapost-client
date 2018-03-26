@@ -6,6 +6,11 @@ Transaction :
 3. Attachments
 
 ```php
+use TheCodingMachine\DocaPost\Client;
+use TheCodingMachine\DocaPost\Transaction;
+use TheCodingMachine\DocaPost\Document;
+use TheCodingMachine\DocaPost\Signatory;
+
 // Init transaction
 $transaction = new Transaction();
 
@@ -24,7 +29,7 @@ $signatory = new Signatory($firstName, $lastName, $phoneNumber, $email);
 $transaction->addSignatory($signatory);
 
 // Sign Transaction
-$client = new Client();
+$client = new Client($docaPostUserName, $docaPostPassword);
 $signatureIds = $client->sign($transaction);
 // The sign method returns an array of signature identifiers. There is one identifier per signature added.
 $firstSignatureId = $signatureIds[0];
@@ -44,7 +49,7 @@ If ($response->success()) {
     $terminatedTransaction = $response->getTerminatedTransaction();
     $terminatedTransaction->getDocument($docName)->save($path);
 } else {
-// return INCORRECT SMS CODE
+    // return INCORRECT SMS CODE
 }
 ```
 

@@ -20,7 +20,7 @@
     <!--
     <php>
         <env name="DOCAPOST_USER" value="foo" />
-        <var name="DOCAPOST_PASSWORD" value="baz" />
+        <env name="DOCAPOST_PASSWORD" value="baz" />
     </php>
     -->
     
