@@ -37,12 +37,12 @@
   },
   "autoload" : {
     "psr-4" : {
-      "TheCodingMachine\\DocaPost\\" : "src/"
+      "TheCodingMachine\\Docapost\\" : "src/"
     }
   },
   "autoload-dev" : {
     "psr-4" : {
-      "TheCodingMachine\\DocaPost\\" : "tests/"
+      "TheCodingMachine\\Docapost\\" : "tests/"
     }
   },
   "scripts": {
