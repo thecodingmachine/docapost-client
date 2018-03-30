@@ -90,12 +90,18 @@ $client->getFinalDoc('DOC_NAME', 'TRANSACTION_ID', 'FILE_PATH_TO_SAVE');
 ```
 
 1, Test Sign
+- Activate codes in tests/ClientTest.php
+- Change to a real phone number or email to receive code
+- Execute follow command
 ```
 ./vendor/bin/phpunit tests/ClientTest.php 
 ```
 Return : $transactionId, $signatureId
 
 2, Test Confirm
+- Activate codes in tests/SignatoryTest.php
+- Add real data in codes with followed "Enter" params
+- Execute followed command
 ```
 ./vendor/bin/phpunit tests/SignatoryTest.php 
 ```
@@ -104,6 +110,9 @@ Enter : $signatureId, $receivedCode, $transactionId
 Return : "Transaction terminated" OR "INCORRECT SMS CODE"
 
 3, Test FinalDoc
+- Activate codes in tests/DocumentTest.php
+- Add real data in codes with followed "Enter" params
+- Execute follow command
 ```
 ./vendor/bin/phpunit tests/DocumentTest.php 
 ```
