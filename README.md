@@ -43,12 +43,12 @@ Prepare documents with signature boxes :
 
 **Attention** : Param 'docName' for Document should be unique in one transaction, otherwise the uploaded file will be replaced by another upload file with same docName. 
 ```php
-$doc1 = new Document(__DIR__.'/testContract.pdf', 'testContract1');
+$doc1 = new Document('testContract1', __DIR__.'/testContract.pdf');
 // Add signature boxes to document
 $doc1->addSignatureBox(299, 94, 267, 54, 1);
 $doc1->addSignatureBox(299, 94, 267, 54, 2);
 // Create another document ...
-$doc2 = new Document(__DIR__.'/testContract.pdf', 'testContract2');
+$doc2 = new Document('testContract2', __DIR__.'/testContract.pdf');
 $doc2->addSignatureBox(299, 92, 267, 55, 1);
 ```
 
@@ -63,8 +63,8 @@ $transaction->setCustomMessage("Pour valider votre signature renseignez le code 
 
 **Optional** : Set attachments to transaction. (Param 'docName' for Document should be unique in one transaction, otherwise the uploaded file will be replaced by another upload file with same docName.)
 ```php
-$attachment1 = new Document(__DIR__.'/testAttachment.png', 'testAttachment1');
-$attachment2 = new Document(__DIR__.'/testAttachment.png', 'testAttachment2');
+$attachment1 = new Document('testAttachment1', __DIR__.'/testAttachment.png');
+$attachment2 = new Document('testAttachment2', __DIR__.'/testAttachment.png');
 $transaction->setAttachments([$attachment1, $attachment2]);
 ```
 Create Docapost Client with $restTransactionUrl :

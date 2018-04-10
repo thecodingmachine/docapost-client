@@ -31,11 +31,11 @@ class Document
 
     /**
      * Document constructor.
-     * @param string $filePath
      * @param string $docName
+     * @param string $filePath
      * @param StreamInterface|null $fileStream
      */
-    public function __construct(string $filePath = null, string $docName, StreamInterface $fileStream = null)
+    public function __construct(string $docName, string $filePath = '', StreamInterface $fileStream = null)
     {
         $this->filePath = $filePath;
         $this->docName = $docName;
