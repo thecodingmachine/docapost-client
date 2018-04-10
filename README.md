@@ -6,6 +6,21 @@ Objects :
 4. Transaction
 
 # Prerequisites
+In your project :
+```
+composer install php-http/guzzle6-adapter
+composer install php-http/message
+``` 
+
+Add in composer.json (Temporary solution to retrieve docapost-client package)
+```
+  "repositories": [
+    {
+    "type": "vcs", 
+    "url": "https://git.thecodingmachine.com/tcm-projects/docapost-client.git" 
+    },
+  ],
+```
 ```php
 use TheCodingMachine\Docapost\Client;
 use TheCodingMachine\Docapost\Document;
@@ -25,6 +40,8 @@ $signatory = new Signatory('Coucou', 'Toto', '+33123456789');
 $transaction->setSignatory($signatory);
 ```
 Prepare documents with signature boxes :
+
+**Attention** : Param 'docName' for Document should be unique in one transaction, otherwise the uploaded file will be replaced by another upload file with same docName. 
 ```php
 $doc1 = new Document(__DIR__.'/testContract.pdf', 'testContract1');
 // Add signature boxes to document
@@ -41,22 +58,26 @@ $transaction->setDocuments([$doc1, $doc2]);
 ```
 **Optional** : Customize SMS or Email message. (*See default $customMessage in Transaction.php*)
 ```php
-/* $transaction->setCustomMessage("Pour valider votre signature renseignez le code suivant :\n{OTP}."); */
+$transaction->setCustomMessage("Pour valider votre signature renseignez le code suivant :\n{OTP}.");
 ```
-**Optional** : Set attachments to transaction
-```
+
+**Optional** : Set attachments to transaction. (Param 'docName' for Document should be unique in one transaction, otherwise the uploaded file will be replaced by another upload file with same docName.)
+```php
 $attachment1 = new Document(__DIR__.'/testAttachment.png', 'testAttachment1');
 $attachment2 = new Document(__DIR__.'/testAttachment.png', 'testAttachment2');
 $transaction->setAttachments([$attachment1, $attachment2]);
 ```
-Create Docapost TestClient :
+Create Docapost Client with $restTransactionUrl :
 ```php
+$client = new Client('DOCAPOST_USER', 'DOCAPOST_PASSWORD', 'https://test.contralia.fr:443/Contralia/api/v2/');
+```
+Otherwise use default $restTransactionUrl TestClient or ProdClient depending on environment :
+````php
 $client = Client::createTestClient('DOCAPOST_USER', 'DOCAPOST_PASSWORD');
-```
-**Optional** : Create Docapost ProdClient instead of TestClient :
-```php
+OR
 $client = Client::createProdClient('DOCAPOST_USER', 'DOCAPOST_PASSWORD');
-```
+````
+
 Start signing transaction :
 ```php
 $signatureId = $client->sign($transaction);
@@ -79,9 +100,17 @@ if ($result) {
 }
 ```
 
-Get a signed document
+Download a signed document to local path :
 ```
-$client->getFinalDoc('DOC_NAME', 'TRANSACTION_ID', 'FILE_PATH_TO_SAVE');
+$client->downloadFinalDoc('DOC_NAME', 'TRANSACTION_ID', 'FILE_PATH_TO_SAVE');
+```
+Or get stream of the signed document, and open it in browser directly :
+```
+$streamDoc = $client->getFinalDocStream('DOC_NAME', 'TRANSACTION_ID');
+return (new Response())
+        ->withHeader('Content-Type', 'application/pdf')
+        ->withHeader('Content-Length', $streamDoc->getSize())
+        ->withBody($streamDoc);
 ```
 
 # Unit Test

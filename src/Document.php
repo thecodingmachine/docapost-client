@@ -35,10 +35,10 @@ class Document
      * @param string $docName
      * @param StreamInterface|null $fileStream
      */
-    public function __construct(string $filePath, string $docName, StreamInterface $fileStream = null)
+    public function __construct(string $filePath = null, string $docName, StreamInterface $fileStream = null)
     {
         $this->filePath = $filePath;
-        $this->docName = $docName.'_'.uniqid();
+        $this->docName = $docName;
         $this->fileStream = $fileStream ? $fileStream : new LazyOpenStream($filePath, 'r');
     }
 
