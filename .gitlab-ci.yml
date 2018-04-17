@@ -1,9 +1,9 @@
 test:
   image: thecodingmachine/php:7.1-v1-cli
-  cache:
-    paths:
-      - vendor
-      - $HOME/.composer
+#  cache:
+#    paths:
+#      - vendor
+#      - $HOME/.composer
 
   before_script:
     - ci/install.sh
