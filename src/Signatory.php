@@ -31,7 +31,7 @@ class Signatory
      * @param string $lastName
      * @param string|null $phoneNumber
      * @param string|null $email
-     * @throws \Exception
+     * @throws ClientException
      */
     public function __construct(string $firstName, string $lastName, string $phoneNumber = null, string $email = null)
     {

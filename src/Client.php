@@ -8,6 +8,7 @@ use Http\Discovery\MessageFactoryDiscovery;
 use Http\Discovery\StreamFactoryDiscovery;
 use Http\Discovery\UriFactoryDiscovery;
 use Psr\Http\Message\RequestInterface;
+use Psr\Http\Message\StreamInterface;
 
 class Client
 {
@@ -278,6 +279,8 @@ class Client
      * @param string $signatureId
      * @param string $receivedCode
      * @return bool
+     * @throws ClientException
+     * @throws SignatureAlreadyPerformedException
      * @throws \Exception
      * @throws \Http\Client\Exception
      */
@@ -295,6 +298,8 @@ class Client
         if (strpos($otpXml, 'error')) {
             if (strpos($otpXml, 'INCORRECT_OTP_CODE')) {
                 return false;
+            } elseif (strpos($otpXml, 'SIGNATURE_ALREADY_DONE')) {
+                throw new SignatureAlreadyPerformedException('SIGNATURE_ALREADY_DONE');
             } else {
                 throw new ClientException($otpXml);
             }
@@ -319,10 +324,11 @@ class Client
      * @param string $docName
      * @param string $transactionId
      * @param string $filePathToSave
+     * @throws ClientException
      * @throws \Exception
      * @throws \Http\Client\Exception
      */
-    public function getFinalDoc(string $docName, string $transactionId, string $filePathToSave = ''): void
+    public function downloadFinalDoc(string $docName, string $transactionId, string $filePathToSave = ''): void
     {
         if (empty($filePathToSave)) {
             $filePathToSave = sys_get_temp_dir() . "/finalDocs/";
@@ -332,11 +338,7 @@ class Client
         }
         $filePath = $filePathToSave.$docName.'_'.$transactionId.".pdf";
 
-        $finalDocUri = 'transactions/'.$transactionId.'/finalDoc?name='.$docName;
-        $request = $this->getBaseRequest($finalDocUri);
-        $response = $this->client->sendRequest($request);
-
-        $result = $response->getBody()->getContents();
+        $result = $this->getFinalDocStream($docName, $transactionId)->getContents();
 
         if (strpos($result, "DOCUMENT_NOT_FOUND")) {
             throw new ClientException($result);
@@ -344,5 +346,21 @@ class Client
         $fp = fopen($filePath, 'w');
         fwrite($fp, $result);
         fclose($fp);
+    }
+
+    /**
+     * @param string $docName
+     * @param string $transactionId
+     * @return StreamInterface
+     * @throws \Exception
+     * @throws \Http\Client\Exception
+     */
+    public function getFinalDocStream(string $docName, string $transactionId): StreamInterface
+    {
+        $finalDocUri = 'transactions/'.$transactionId.'/finalDoc?name='.$docName;
+        $request = $this->getBaseRequest($finalDocUri);
+        $response = $this->client->sendRequest($request);
+
+        return $response->getBody();
     }
 }
