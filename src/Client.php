@@ -106,7 +106,8 @@ class Client
      */
     private function getMultipartRequest(string $uri, array $multipartData) : RequestInterface
     {
-        $body = new MultipartStream($multipartData);
+        // Note: hard-coding boundary for unit test reproducibility.
+        $body = new MultipartStream($multipartData, '48baba26213e9980d5cb854fec388a77121b2640');
         $uriFactory = UriFactoryDiscovery::find();
         $request = $this->getBaseRequest();
         $request = $request->withMethod('POST')
@@ -175,7 +176,7 @@ class Client
      * @throws \Exception
      * @throws \Http\Client\Exception
      */
-    public function uploadAttachments(Transaction $transaction): void
+    private function uploadAttachments(Transaction $transaction): void
     {
         foreach ($transaction->getAttachments() as $attachment) {
             $multipartData = [
@@ -188,7 +189,10 @@ class Client
 
             $attachUri = 'transactions/'.$transaction->getTransactionId().'/attachment/'.$attachment->getDocName();
             $request = $this->getMultipartRequest($attachUri, $multipartData);
-            $this->client->sendRequest($request);
+            $response = $this->client->sendRequest($request);
+            if ($response->getStatusCode() >= 400) {
+                throw new ClientException('Error while storing transations. Got status code '.$response->getStatusCode().'. Response: '.$response->getBody());
+            }
         }
     }
 

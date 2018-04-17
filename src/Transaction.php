@@ -53,14 +53,14 @@ class Transaction
      * @param int $signatoriesCount
      * @throws ClientException
      */
-    public function __construct(string $offerCode, string $organizationalUnitCode, string $customRef, int $signatoriesCount = 1)
+    public function __construct(string $offerCode, string $organizationalUnitCode, ?string $customRef = null, int $signatoriesCount = 1)
     {
         $this->offerCode = $offerCode;
         $this->organizationalUnitCode = $organizationalUnitCode;
-        if (strlen($customRef) > 32) {
+        if ($customRef !== null && \strlen($customRef) > 32) {
             throw new ClientException('Transaction customRef should have maximum 32 characters');
         }
-        $this->customRef = $customRef.'_'.uniqid();
+        $this->customRef = $customRef ?: uniqid('trans', true);
         $this->signatoriesCount = $signatoriesCount;
     }
 
