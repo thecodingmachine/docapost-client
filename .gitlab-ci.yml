@@ -1,5 +1,5 @@
 test:
-  image: thecodingmachine/php:7.1-v1-cli
+  image: thecodingmachine/php:7.2-v1-cli
 #  cache:
 #    paths:
 #      - vendor
