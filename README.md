@@ -40,7 +40,7 @@ use TheCodingMachine\Docapost\Transaction;
 First, we need to create the $client object that can connect to Docapost:
 
 ```php
-$client = Client::createTestClient(
+$client = Client::createClient(
     $docaPostUser,
     $docaPostPassword,
     new \RicardoFiorani\GuzzlePsr18Adapter\Client([

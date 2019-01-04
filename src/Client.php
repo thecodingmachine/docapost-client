@@ -37,7 +37,7 @@ class Client
      */
     private $uriFactory;
     /**
-     * @var StreamFactory
+     * @var StreamFactoryInterface
      */
     private $streamFactory;
 
