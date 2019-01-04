@@ -1,4 +1,5 @@
 # Docapost Electronic Signature
+
 Objects :
 1. Client
 2. Document
@@ -6,11 +7,6 @@ Objects :
 4. Transaction
 
 # Prerequisites
-In your project :
-```
-composer install php-http/guzzle6-adapter
-composer install php-http/message
-``` 
 
 Add in composer.json (Temporary solution to retrieve docapost-client package)
 ```
@@ -21,6 +17,17 @@ Add in composer.json (Temporary solution to retrieve docapost-client package)
     },
   ],
 ```
+
+In your project :
+
+```
+composer require guzzlehttp/psr7
+composer require ricardofiorani/guzzle-psr18-adapter
+composer require http-interop/http-factory-guzzle
+composer require thecodingmachine/docapost-client
+``` 
+
+
 ```php
 use TheCodingMachine\Docapost\Client;
 use TheCodingMachine\Docapost\Document;
@@ -29,6 +36,21 @@ use TheCodingMachine\Docapost\Transaction;
 ```
 
 # Quick start
+
+First, we need to create the $client object that can connect to Docapost:
+
+```php
+$client = Client::createTestClient(
+    $docaPostUser,
+    $docaPostPassword,
+    new \RicardoFiorani\GuzzlePsr18Adapter\Client([
+      'http_errors' => false
+    ]),
+    new \Http\Factory\Guzzle\RequestFactory(),
+    new \Http\Factory\Guzzle\UriFactory(),
+    new \Http\Factory\Guzzle\StreamFactory());
+```
+
 Create a transaction :
 ```php
 $transaction = new Transaction('UNEO-TEST', 'UNEO-TEST-DISTRIB', 'test');

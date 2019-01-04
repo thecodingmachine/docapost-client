@@ -3,6 +3,9 @@
 
 namespace TheCodingMachine\Docapost;
 
+use Http\Factory\Guzzle\RequestFactory;
+use Http\Factory\Guzzle\StreamFactory;
+use Http\Factory\Guzzle\UriFactory;
 use PHPUnit\Framework\TestCase;
 
 class ClientTest extends TestCase
@@ -48,8 +51,15 @@ class ClientTest extends TestCase
         $attachment2 = new Document('testAttachment2', __DIR__.'/testAttachment.png');
         $transaction->setAttachments([$attachment1, $attachment2]);
 
+
         // Create Docapost client
-        $client = Client::createTestClient(\getenv('DOCAPOST_USER'), \getenv('DOCAPOST_PASSWORD'));
+        $client = Client::createTestClient(\getenv('DOCAPOST_USER'), \getenv('DOCAPOST_PASSWORD'),
+            new \RicardoFiorani\GuzzlePsr18Adapter\Client([
+                'http_errors' => false
+            ]),
+            new RequestFactory(),
+            new UriFactory(),
+            new StreamFactory());
         // Start signing transaction
         $signatureId = $client->sign($transaction);
         $this->assertInternalType('string', $signatureId);
@@ -57,7 +67,7 @@ class ClientTest extends TestCase
         $result = $client->confirm($signatureId, '999999');
         $this->assertFalse($result);
 
-        $result = $client->confirm($signatureId, '331640');
+        $result = $client->confirm($signatureId, '307088');
         $this->assertTrue($result);
 
         $stream = $client->getFinalDocStream('testContract1', $signatureId);
