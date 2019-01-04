@@ -1,9 +1,11 @@
 test:
-  image: thecodingmachine/php:7.1-v1-cli
+  image: thecodingmachine/php:7.2-v1-cli
 #  cache:
 #    paths:
 #      - vendor
 #      - $HOME/.composer
+  variables:
+    PHP_INI_MEMORY_LIMIT: 1G
 
   before_script:
     - ci/install.sh

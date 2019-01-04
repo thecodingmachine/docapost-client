@@ -3,12 +3,12 @@
 namespace TheCodingMachine\Docapost;
 
 use GuzzleHttp\Psr7\MultipartStream;
-use Http\Discovery\HttpClientDiscovery;
-use Http\Discovery\MessageFactoryDiscovery;
-use Http\Discovery\StreamFactoryDiscovery;
-use Http\Discovery\UriFactoryDiscovery;
+use Psr\Http\Message\StreamFactoryInterface;
+use Psr\Http\Client\ClientInterface;
+use Psr\Http\Message\RequestFactoryInterface;
 use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\StreamInterface;
+use Psr\Http\Message\UriFactoryInterface;
 
 class Client
 {
@@ -25,9 +25,21 @@ class Client
      */
     private $restTransactionUrl;
     /**
-     * @var \Http\Client\HttpClient
+     * @var ClientInterface
      */
     private $client;
+    /**
+     * @var RequestFactoryInterface
+     */
+    private $requestFactory;
+    /**
+     * @var UriFactoryInterface
+     */
+    private $uriFactory;
+    /**
+     * @var StreamFactoryInterface
+     */
+    private $streamFactory;
 
     /**
      * Client constructor.
@@ -35,12 +47,15 @@ class Client
      * @param string $password
      * @param string $restTransactionUrl
      */
-    public function __construct(string $userName, string $password, string $restTransactionUrl)
+    public function __construct(string $userName, string $password, string $restTransactionUrl, ClientInterface $client, RequestFactoryInterface $requestFactory, UriFactoryInterface $uriFactory, StreamFactoryInterface $streamFactory)
     {
         $this->userName = $userName;
         $this->password = $password;
         $this->restTransactionUrl = $restTransactionUrl;
-        $this->client = HttpClientDiscovery::find();
+        $this->client = $client;
+        $this->requestFactory = $requestFactory;
+        $this->uriFactory = $uriFactory;
+        $this->streamFactory = $streamFactory;
     }
 
     /**
@@ -48,9 +63,9 @@ class Client
      * @param string $password
      * @return self
      */
-    public static function createTestClient(string $userName, string $password) : self
+    public static function createTestClient(string $userName, string $password, ClientInterface $client, RequestFactoryInterface $requestFactory, UriFactoryInterface $uriFactory, StreamFactoryInterface $streamFactory) : self
     {
-        return new self($userName, $password, 'https://test.contralia.fr:443/Contralia/api/v2/');
+        return new self($userName, $password, 'https://test.contralia.fr:443/Contralia/api/v2/', $client, $requestFactory, $uriFactory, $streamFactory);
     }
 
     /**
@@ -58,9 +73,9 @@ class Client
      * @param string $password
      * @return self
      */
-    public static function createProdClient(string $userName, string $password) : self
+    public static function createProdClient(string $userName, string $password, ClientInterface $client, RequestFactoryInterface $requestFactory, UriFactoryInterface $uriFactory, StreamFactoryInterface $streamFactory) : self
     {
-        return new self($userName, $password, 'https://www.contralia.fr:443/Contralia/api/v2/');
+        return new self($userName, $password, 'https://www.contralia.fr:443/Contralia/api/v2/', $client, $requestFactory, $uriFactory, $streamFactory);
     }
 
     /**
@@ -74,9 +89,7 @@ class Client
         } else {
             $uri = $this->restTransactionUrl;
         }
-        $messageFactory = MessageFactoryDiscovery::find();
-        $uriFactory = UriFactoryDiscovery::find();
-        $request = $messageFactory->createRequest('GET', $uriFactory->createUri($uri));
+        $request = $this->requestFactory->createRequest('GET', $uri);
 
         $request = $request->withHeader('Authorization', 'Basic '.base64_encode($this->userName.':'.$this->password));
         return $request;
@@ -89,11 +102,10 @@ class Client
      */
     private function getPostRequest(string $uri, array $data = []) : RequestInterface
     {
-        $postStream = StreamFactoryDiscovery::find()->createStream(http_build_query($data));
-        $uriFactory = UriFactoryDiscovery::find();
+        $postStream = $this->streamFactory->createStream(http_build_query($data));
         $request = $this->getBaseRequest();
         $request = $request->withMethod('POST')
-                            ->withUri($uriFactory->createUri($this->restTransactionUrl . $uri))
+                            ->withUri($this->uriFactory->createUri($this->restTransactionUrl . $uri))
                             ->withHeader('Content-Type', 'application/x-www-form-urlencoded')
                             ->withBody($postStream);
         return $request;
@@ -108,10 +120,9 @@ class Client
     {
         // Note: hard-coding boundary for unit test reproducibility.
         $body = new MultipartStream($multipartData, '48baba26213e9980d5cb854fec388a77121b2640');
-        $uriFactory = UriFactoryDiscovery::find();
         $request = $this->getBaseRequest();
         $request = $request->withMethod('POST')
-                            ->withUri($uriFactory->createUri($this->restTransactionUrl . $uri))
+                            ->withUri($this->uriFactory->createUri($this->restTransactionUrl . $uri))
                             ->withBody($body);
         return $request;
     }
