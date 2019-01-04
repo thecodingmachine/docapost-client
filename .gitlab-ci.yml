@@ -4,6 +4,8 @@ test:
 #    paths:
 #      - vendor
 #      - $HOME/.composer
+  variables:
+    PHP_INI_MEMORY_LIMIT: 1G
 
   before_script:
     - ci/install.sh
