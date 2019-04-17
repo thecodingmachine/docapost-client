@@ -129,15 +129,14 @@ class Client
 
     /**
      * @param Transaction $transaction
-     * @return mixed
+     * @return Transaction
      * @throws \Exception
      * @throws \Http\Client\Exception
      */
-    public function sign(Transaction $transaction)
+    public function initiate(Transaction $transaction)
     {
         // Initiate transaction
-        $transactionId = $this->initiate($transaction);
-
+        $transactionId = $this->createTransaction($transaction);
         $transaction->setTransactionId($transactionId);
 
         // Upload attachments if exist
@@ -147,13 +146,7 @@ class Client
         // Upload documents to sign
         $this->uploadDocuments($transaction);
 
-        // Sign with single signatory
-        $signatureId = $this->signatory($transaction);
-
-        // Send code via SMS or Email
-        $this->sendCode($signatureId, $transaction->getCustomMessage());
-
-        return $signatureId;
+        return $transactionId;
     }
 
     /**
@@ -162,7 +155,7 @@ class Client
      * @throws \Exception
      * @throws \Http\Client\Exception
      */
-    public function initiate(Transaction $transaction)
+    private function createTransaction(Transaction $transaction)
     {
         $initUri = $transaction->getOfferCode().'/transactions';
 
@@ -212,7 +205,7 @@ class Client
      * @throws \Exception
      * @throws \Http\Client\Exception
      */
-    public function uploadDocuments(Transaction $transaction): void
+    private function uploadDocuments(Transaction $transaction): void
     {
         /** @var Document $document */
         foreach ($transaction->getDocuments() as $document) {
@@ -239,15 +232,17 @@ class Client
     }
 
     /**
-     * @param Transaction $transaction
+     * @param string $transactionId
+     * @param Signatory $signatory
+     * @param int $position
+     *
      * @return mixed
      * @throws \Exception
      * @throws \Http\Client\Exception
      */
-    public function signatory(Transaction $transaction)
+    public function signatory(string $transactionId, Signatory $signatory, $position = 1)
     {
-        $signatory = $transaction->getSignatory();
-        $signatoryUri = 'transactions/'.$transaction->getTransactionId().'/signatory/';
+        $signatoryUri = 'transactions/'.$transactionId.'/signatory/'.$position;
         $postData = [
             'firstname' => $signatory->getFirstName(),
             'lastname' => $signatory->getLastName(),

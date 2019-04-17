@@ -25,14 +25,6 @@ class Transaction
      */
     private $documents = [];
     /**
-     * @var Signatory[]
-     */
-    private $signatorys = [];
-    /**
-     * @var Signatory
-     */
-    private $signatory;
-    /**
      * @var Document[]
      */
     private $attachments = [];
@@ -78,15 +70,6 @@ class Transaction
     public function setDocuments(array $documents): void
     {
         $this->documents = $documents;
-    }
-
-    /**
-     * @param Signatory $signatory
-     */
-    public function addSignatory(Signatory $signatory): void
-    {
-        // TODO Multiple signatories
-//        array_push($this->signatorys, $signatory);
     }
 
     /**
@@ -153,13 +136,6 @@ class Transaction
         return $this->attachments;
     }
 
-    /**
-     * @return Signatory[]
-     */
-    public function getSignatorys(): array
-    {
-        return $this->signatorys;
-    }
 
     /**
      * @return int
@@ -177,37 +153,4 @@ class Transaction
         $this->signatoriesCount = $signatoriesCount;
     }
 
-    /**
-     * @return Signatory
-     */
-    public function getSignatory(): Signatory
-    {
-        return $this->signatory;
-    }
-
-    /**
-     * @param Signatory $signatory
-     */
-    public function setSignatory(Signatory $signatory): void
-    {
-        $this->signatory = $signatory;
-    }
-
-    /**
-     * @return string
-     */
-    public function getCustomMessage(): string
-    {
-        return $this->customMessage;
-    }
-
-    /**
-     * @param string $customMessage
-     */
-    public function setCustomMessage(string $customMessage): void
-    {
-        if (!empty($customMessage)) {
-            $this->customMessage = $customMessage;
-        }
-    }
 }
