@@ -104,13 +104,13 @@ $signatureId = $client->signatory('TRANSACTION_ID', $signatory, 'SIGNATORY_POSIT
 
 Send the code :
 ```php
-$client->sendCode('SIGNATURE_ID', "Pour valider votre signature renseignez le code suivant :\n{OTP}.")
+$client->sendCode('SIGNATURE_ID')
 ```
 
 **Optional** :
 ```php
 // Resend SMS to the signatory if first SMS was non received
-$client->sendCode('SIGNATURE_ID', "Pour valider votre signature renseignez le code suivant :\n{OTP}.")
+$client->sendCode('SIGNATURE_ID')
 ```
 
 Confirm transaction with received code :

@@ -28,10 +28,6 @@ class ClientTest extends TestCase
         // Create transaction
         $transaction = new Transaction('UNEO-TEST', 'UNEO-TEST-DISTRIB', 'test');
 
-        // Create single signatory
-        $signatory = new Signatory('Foo', 'Bar', '+33619995558');
-        $transaction->setSignatory($signatory);
-
         // Create document
         $doc1 = new Document('testContract1', __DIR__.'/testContract.pdf');
         // Add signature boxes to document
@@ -60,9 +56,17 @@ class ClientTest extends TestCase
             new RequestFactory(),
             new UriFactory(),
             new StreamFactory());
-        // Start signing transaction
-        $signatureId = $client->sign($transaction);
+        // Initiate transaction
+        $transactionId = $client->initiate($transaction);
+        $this->assertInternalType('string', $transactionId);
+
+        // Add a single signatory
+        $signatory = new Signatory('Foo', 'Bar', '+33619995558');
+        $signatureId = $client->signatory($transactionId, $signatory);
         $this->assertInternalType('string', $signatureId);
+
+        // Send Code
+        $client->sendCode($signatureId);
 
         $result = $client->confirm($signatureId, '999999');
         $this->assertFalse($result);

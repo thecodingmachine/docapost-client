@@ -268,7 +268,7 @@ class Client
      * @throws \Exception
      * @throws \Http\Client\Exception
      */
-    public function sendCode(string $signatureId, string $customMessage): void
+    public function sendCode(string $signatureId, string $customMessage = "Pour valider votre signature renseignez le code suivant :\n{OTP}."): void
     {
         $genOtpUri = 'signatures/'.$signatureId.'/genOtp';
         /*
