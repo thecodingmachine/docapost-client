@@ -13,6 +13,7 @@ class ClientTest extends TestCase
     public function setUp()
     {
         parent::setUp();
+        \VCR\VCR::configure()->enableRequestMatchers(['method', 'url', 'host', 'body', 'post_fields', 'query_string']);
         \VCR\VCR::turnOn();
         \VCR\VCR::insertCassette('test-cassette.yml');
     }
