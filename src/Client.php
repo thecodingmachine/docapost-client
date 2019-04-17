@@ -129,7 +129,7 @@ class Client
 
     /**
      * @param Transaction $transaction
-     * @return Transaction
+     * @return mixed
      * @throws \Exception
      * @throws \Http\Client\Exception
      */
@@ -240,7 +240,7 @@ class Client
      * @throws \Exception
      * @throws \Http\Client\Exception
      */
-    public function signatory(string $transactionId, Signatory $signatory, $position = 1)
+    public function signatory(string $transactionId, Signatory $signatory, int $position = 1)
     {
         $signatoryUri = 'transactions/'.$transactionId.'/signatory/'.$position;
         $postData = [
