@@ -13,6 +13,7 @@ class ClientTest extends TestCase
     public function setUp()
     {
         parent::setUp();
+        \VCR\VCR::configure()->enableRequestMatchers(['method', 'url', 'host', 'body', 'post_fields', 'query_string']);
         \VCR\VCR::turnOn();
         \VCR\VCR::insertCassette('test-cassette.yml');
     }
@@ -26,11 +27,7 @@ class ClientTest extends TestCase
     {
 
         // Create transaction
-        $transaction = new Transaction('UNEO-TEST', 'UNEO-TEST-DISTRIB', 'test');
-
-        // Create single signatory
-        $signatory = new Signatory('Foo', 'Bar', '+33619995558');
-        $transaction->setSignatory($signatory);
+        $transaction = new Transaction('CODING_MACHINE-TEST', 'CODING_MACHINE-TEST-DISTRIB', 'test');
 
         // Create document
         $doc1 = new Document('testContract1', __DIR__.'/testContract.pdf');
@@ -60,14 +57,22 @@ class ClientTest extends TestCase
             new RequestFactory(),
             new UriFactory(),
             new StreamFactory());
-        // Start signing transaction
-        $signatureId = $client->sign($transaction);
+        // Initiate transaction
+        $transactionId = $client->initiate($transaction);
+        $this->assertInternalType('string', $transactionId);
+
+        // Add a single signatory
+        $signatory = new Signatory('Foo', 'Bar', '+33632317272');
+        $signatureId = $client->signatory($transactionId, $signatory);
         $this->assertInternalType('string', $signatureId);
+
+        // Send Code
+        $client->sendCode($signatureId);
 
         $result = $client->confirm($signatureId, '999999');
         $this->assertFalse($result);
 
-        $result = $client->confirm($signatureId, '307088');
+        $result = $client->confirm($signatureId, '372944');
         $this->assertTrue($result);
 
         $stream = $client->getFinalDocStream('testContract1', $signatureId);

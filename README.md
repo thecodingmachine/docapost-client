@@ -15,6 +15,14 @@ Add in composer.json (Temporary solution to retrieve docapost-client package)
     "type": "vcs", 
     "url": "https://git.thecodingmachine.com/tcm-projects/docapost-client.git" 
     },
+    "config": {
+        "http-basic": {
+            "git.thecodingmachine.com" : {
+                "username": "your name for gitlab",
+                "password": "generated key, not password"
+            }
+        }
+    }    
   ],
 ```
 
@@ -56,11 +64,6 @@ Create a transaction :
 $transaction = new Transaction('UNEO-TEST', 'UNEO-TEST-DISTRIB', 'test');
 ```
 
-Create single signatory :
-```php
-$signatory = new Signatory('Coucou', 'Toto', '+33123456789');
-$transaction->setSignatory($signatory);
-```
 Prepare documents with signature boxes :
 
 **Attention** : Param 'docName' for Document should be unique in one transaction, otherwise the uploaded file will be replaced by another upload file with same docName. 
@@ -77,10 +80,6 @@ $doc2->addSignatureBox(299, 92, 267, 55, 1);
 Add documents to transaction :
 ```php
 $transaction->setDocuments([$doc1, $doc2]);
-```
-**Optional** : Customize SMS or Email message. (*See default $customMessage in Transaction.php*)
-```php
-$transaction->setCustomMessage("Pour valider votre signature renseignez le code suivant :\n{OTP}.");
 ```
 
 **Optional** : Set attachments to transaction. (Param 'docName' for Document should be unique in one transaction, otherwise the uploaded file will be replaced by another upload file with same docName.)
@@ -100,15 +99,26 @@ OR
 $client = Client::createProdClient('DOCAPOST_USER', 'DOCAPOST_PASSWORD');
 ````
 
-Start signing transaction :
+Initiate the transaction :
 ```php
-$signatureId = $client->sign($transaction);
+$transactionId = $client->initiate($transaction);
+```
+
+Add a signatory :
+```php
+$signatory = new Signatory('Coucou', 'Toto', '+33123456789');
+$signatureId = $client->signatory('TRANSACTION_ID', $signatory, 'SIGNATORY_POSITION');
+```
+
+Send the code :
+```php
+$client->sendCode('SIGNATURE_ID')
 ```
 
 **Optional** :
 ```php
 // Resend SMS to the signatory if first SMS was non received
-$client->sendCode($signatureId);
+$client->sendCode('SIGNATURE_ID')
 ```
 
 Confirm transaction with received code :
