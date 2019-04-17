@@ -26,7 +26,7 @@ class ClientTest extends TestCase
     {
 
         // Create transaction
-        $transaction = new Transaction('UNEO-TEST', 'UNEO-TEST-DISTRIB', 'test');
+        $transaction = new Transaction('CODING_MACHINE-TEST', 'CODING_MACHINE-TEST-DISTRIB', 'test');
 
         // Create document
         $doc1 = new Document('testContract1', __DIR__.'/testContract.pdf');
@@ -61,7 +61,7 @@ class ClientTest extends TestCase
         $this->assertInternalType('string', $transactionId);
 
         // Add a single signatory
-        $signatory = new Signatory('Foo', 'Bar', '+33619995558');
+        $signatory = new Signatory('Foo', 'Bar', '+33632317272');
         $signatureId = $client->signatory($transactionId, $signatory);
         $this->assertInternalType('string', $signatureId);
 
@@ -71,7 +71,7 @@ class ClientTest extends TestCase
         $result = $client->confirm($signatureId, '999999');
         $this->assertFalse($result);
 
-        $result = $client->confirm($signatureId, '307088');
+        $result = $client->confirm($signatureId, '372944');
         $this->assertTrue($result);
 
         $stream = $client->getFinalDocStream('testContract1', $signatureId);

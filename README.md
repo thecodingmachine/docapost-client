@@ -15,6 +15,14 @@ Add in composer.json (Temporary solution to retrieve docapost-client package)
     "type": "vcs", 
     "url": "https://git.thecodingmachine.com/tcm-projects/docapost-client.git" 
     },
+    "config": {
+        "http-basic": {
+            "git.thecodingmachine.com" : {
+                "username": "your name for gitlab",
+                "password": "generated key, not password"
+            }
+        }
+    }    
   ],
 ```
 
