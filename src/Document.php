@@ -55,7 +55,7 @@ class Document
 
         $fieldsXml = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?><fields xmlns=\"http://www.contralia.fr/champsPdf\">";
 
-        foreach ($this->signatureBoxes as $index=>$signatureBox) {
+        foreach ($this->signatureBoxes as $index => $signatureBox) {
             $number = $index + 1;
 
             $fieldsXml .= "<signatorySignature number=\"".$number."\">";
