@@ -248,7 +248,7 @@ class Client
             'lastname' => $signatory->getLastName(),
             'phone' => $signatory->getPhoneNumber(),
             'email' => $signatory->getEmail(),
-            'fieldNumber' => 1,
+            'fieldNumber' => $position,
         ];
         $request = $this->getPostRequest($signatoryUri, $postData);
         $response = $this->client->sendRequest($request);
