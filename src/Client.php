@@ -264,11 +264,13 @@ class Client
     /**
      * Send code via SMS or Email
      * @param string $signatureId
+     * @param string $customSender
+     * @param string $customSubject
      * @param string $customMessage
      * @throws \Exception
      * @throws \Http\Client\Exception
      */
-    public function sendCode(string $signatureId, string $customMessage = "Pour valider votre signature renseignez le code suivant :\n{OTP}."): void
+    public function sendCode(string $signatureId, string $customSender = "", string $customSubject = "", string $customMessage = "Pour valider votre signature renseignez le code suivant :\n{OTP}."): void
     {
         $genOtpUri = 'signatures/'.$signatureId.'/genOtp';
         /*
@@ -279,6 +281,8 @@ class Client
          * */
         $postData = [
             'deliveryMode' => 'AUTO',
+            "customSender" => $customSender,
+            'customSubject' => $customSubject,
             'customMessage' => $customMessage,
         ];
         $request = $this->getPostRequest($genOtpUri, $postData);
