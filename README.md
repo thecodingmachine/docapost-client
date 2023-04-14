@@ -1,5 +1,7 @@
-> ** :warning: WARNING**: This repository is not actively maintained !
+> # :warning: WARNING: This repository is not actively maintained !
+> 
 > If you are intersted in contributing, please reeach out to us !
+>
 > If you consider using this package in production, you may have some upgrades to perform.
 
 
@@ -17,9 +19,8 @@ Implemented objects :
   composer require thecodingmachine/docapost-client
 ```
 
-You will als need a PSR 7 implementation, we recommend :
+You will also need a PSR 7 implementation, we recommend :
 ```
-
 composer require guzzlehttp/psr7
 composer require ricardofiorani/guzzle-psr18-adapter
 composer require http-interop/http-factory-guzzle
@@ -38,8 +39,8 @@ First, we need to create the $client object that can connect to Docapost:
 
 ```php
 $client = Client::createClient(
-    $docaPostUser,
-    $docaPostPassword,
+    'YOUR_DOCAPOST_USERNAME',
+    'YOUR_DOCAPOST_PASSWORD',
     new \RicardoFiorani\GuzzlePsr18Adapter\Client([
       'http_errors' => false
     ]),
@@ -50,7 +51,12 @@ $client = Client::createClient(
 
 Create a transaction :
 ```php
-$transaction = new Transaction('UNEO-TEST', 'UNEO-TEST-DISTRIB', 'test');
+$transaction = new Transaction(
+    'YOUR_DOCAPOST_OFFER_CODE',
+    'YOUR_DOCAPOST_ORGANIZATION_UNIT_CODE',
+    null,  // Optional, will be generated
+    1,     // Optional, nb of signartories
+);
 ```
 
 Prepare documents with signature boxes :
