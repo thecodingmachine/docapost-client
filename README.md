@@ -1,40 +1,31 @@
-# Docapost Electronic Signature
+> ** :warning: WARNING**: This repository is not actively maintained !
+> If you are intersted in contributing, please reeach out to us !
+> If you consider using this package in production, you may have some upgrades to perform.
 
-Objects :
+
+# Current Implementations
+
+Implemented objects :
 1. Client
 2. Document
 3. Signatory
 4. Transaction
 
-# Prerequisites
-
-Add in composer.json (Temporary solution to retrieve docapost-client package)
-```
-  "repositories": [
-    {
-    "type": "vcs", 
-    "url": "https://git.thecodingmachine.com/tcm-projects/docapost-client.git" 
-    },
-    "config": {
-        "http-basic": {
-            "git.thecodingmachine.com" : {
-                "username": "your name for gitlab",
-                "password": "generated key, not password"
-            }
-        }
-    }    
-  ],
-```
-
-In your project :
+# Install
 
 ```
+  composer require thecodingmachine/docapost-client
+```
+
+You will als need a PSR 7 implementation, we recommend :
+```
+
 composer require guzzlehttp/psr7
 composer require ricardofiorani/guzzle-psr18-adapter
 composer require http-interop/http-factory-guzzle
-composer require thecodingmachine/docapost-client
 ``` 
 
+# Quick start
 
 ```php
 use TheCodingMachine\Docapost\Client;
@@ -42,8 +33,6 @@ use TheCodingMachine\Docapost\Document;
 use TheCodingMachine\Docapost\Signatory;
 use TheCodingMachine\Docapost\Transaction;
 ```
-
-# Quick start
 
 First, we need to create the $client object that can connect to Docapost:
 
@@ -66,7 +55,7 @@ $transaction = new Transaction('UNEO-TEST', 'UNEO-TEST-DISTRIB', 'test');
 
 Prepare documents with signature boxes :
 
-**Attention** : Param 'docName' for Document should be unique in one transaction, otherwise the uploaded file will be replaced by another upload file with same docName. 
+**Warning** : Param 'docName' for Document should be unique in one transaction, otherwise the uploaded file will be replaced by another upload file with same docName. 
 ```php
 $doc1 = new Document('testContract1', __DIR__.'/testContract.pdf');
 // Add signature boxes to document
@@ -144,37 +133,3 @@ return (new Response())
         ->withHeader('Content-Length', $streamDoc->getSize())
         ->withBody($streamDoc);
 ```
-
-# Unit Test
-```
-./vendor/bin/phpunit ONE_TEST.php
-```
-
-1, Test Sign
-- Activate codes in tests/ClientTest.php
-- Change to a real phone number or email to receive code
-- Execute follow command
-```
-./vendor/bin/phpunit tests/ClientTest.php 
-```
-Return : $transactionId, $signatureId
-
-2, Test Confirm
-- Activate codes in tests/SignatoryTest.php
-- Add real data in codes with followed "Enter" params
-- Execute followed command
-```
-./vendor/bin/phpunit tests/SignatoryTest.php 
-```
-Enter : $signatureId, $receivedCode, $transactionId
-
-Return : "Transaction terminated" OR "INCORRECT SMS CODE"
-
-3, Test FinalDoc
-- Activate codes in tests/DocumentTest.php
-- Add real data in codes with followed "Enter" params
-- Execute follow command
-```
-./vendor/bin/phpunit tests/DocumentTest.php 
-```
-Enter : $docName, $transactionId, $filePathToSave
