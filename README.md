@@ -1,6 +1,6 @@
 > # :warning: WARNING: This repository is not actively maintained !
 > 
-> If you are intersted in contributing, please reeach out to us !
+> If you are interested in contributing, please reach out to us !
 >
 > If you consider using this package in production, you may have some upgrades to perform.
 
